@@ -1,8 +1,7 @@
+use crate::PlatzClient;
 use anyhow::Result;
 use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::env;
-use url::Url;
 use uuid::Uuid;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -30,10 +29,10 @@ pub struct NewDeploymentResource {
 }
 
 impl NewDeploymentResource {
-    pub async fn send(self) -> Result<DeploymentResource> {
-        let url = Url::parse(&env::var("PLATZ_URL")?)?.join("/api/v1/deployment-resources")?;
-        Ok(reqwest::Client::new()
-            .post(url)
+    pub async fn send(self, client: &PlatzClient) -> Result<DeploymentResource> {
+        Ok(client
+            .request(reqwest::Method::POST, "/api/v1/deployment-resources")
+            .await?
             .json(&self)
             .send()
             .await?

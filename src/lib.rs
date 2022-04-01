@@ -1,3 +1,7 @@
-pub mod deployment_resource_types;
-pub mod deployment_resources;
-pub mod deployment_status;
+mod client;
+mod resources;
+mod types;
+
+pub use client::*;
+pub use resources::*;
+pub use types::*;
