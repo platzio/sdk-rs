@@ -4,7 +4,12 @@ edition = "2021"
 license-file = "LICENSE"
 name = "platz-sdk"
 repository = "https://github.com/platzio/sdk-rs"
-version = "0.2.1"
+version = "0.4.0"
+
+[features]
+default = ["uuid_08"]
+uuid_08 = ["dep:uuid08"]
+uuid_1 = ["dep:uuid1"]
 
 [dependencies]
 anyhow = "1.0.56"
@@ -19,4 +24,5 @@ serde_json = "1"
 strum = {version = "0", features = ["derive"]}
 thiserror = "1.0.30"
 url = {version = "2.2.2", features = ["serde"]}
-uuid = {version = "0.8.2", features = ["serde"]}
+uuid08 = {optional = true, package = "uuid", version = "0.8.2", features = ["serde"]}
+uuid1 = {optional = true, package = "uuid", version = "1", features = ["serde"]}
