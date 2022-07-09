@@ -28,15 +28,14 @@ pub struct NewDeploymentResource {
     pub sync_status: Option<SyncStatus>,
 }
 
-impl NewDeploymentResource {
-    pub async fn send(self, client: &PlatzClient) -> Result<DeploymentResource> {
-        Ok(client
-            .request(reqwest::Method::POST, "/api/v1/deployment-resources")
-            .await?
-            .json(&self)
-            .send()
-            .await?
-            .json()
+impl PlatzClient {
+    pub async fn create_deployment_resource(
+        &self,
+        values: NewDeploymentResource,
+    ) -> Result<DeploymentResource> {
+        Ok(self
+            .request(reqwest::Method::POST, "/api/v2/deployment-resources")
+            .send_with_body(values)
             .await?)
     }
 }

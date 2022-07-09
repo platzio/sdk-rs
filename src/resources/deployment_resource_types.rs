@@ -14,38 +14,32 @@ pub struct DeploymentResourceType {
     pub spec: serde_json::Value,
 }
 
-impl DeploymentResourceType {
-    pub async fn find_global(
-        client: &PlatzClient,
+impl PlatzClient {
+    pub async fn find_global_deployment_resource_type(
+        self,
         deployment_kind: String,
         key: String,
-    ) -> Result<Self> {
-        Ok(client
-            .request(reqwest::Method::GET, "/api/v1/deployment-resource-types")
-            .await?
-            .query(&["deployment_kind", &deployment_kind])
-            .query(&["key", &key])
-            .send()
-            .await?
-            .json()
+    ) -> Result<DeploymentResourceType> {
+        Ok(self
+            .request(reqwest::Method::GET, "/api/v2/deployment-resource-types")
+            .query("deployment_kind", &deployment_kind)
+            .query("key", &key)
+            .paginated_expect_one()
             .await?)
     }
 
-    pub async fn find(
-        client: &PlatzClient,
+    pub async fn find_deployment_resource_type(
+        self,
         env_id: Uuid,
         deployment_kind: String,
         key: String,
-    ) -> Result<Self> {
-        Ok(client
-            .request(reqwest::Method::GET, "/api/v1/deployment-resource-types")
-            .await?
-            .query(&["env_id", &env_id.to_string()])
-            .query(&["deployment_kind", &deployment_kind])
-            .query(&["key", &key])
-            .send()
-            .await?
-            .json()
+    ) -> Result<DeploymentResourceType> {
+        Ok(self
+            .request(reqwest::Method::GET, "/api/v2/deployment-resource-types")
+            .query("env_id", &env_id.to_string())
+            .query("deployment_kind", &deployment_kind)
+            .query("key", &key)
+            .paginated_expect_one()
             .await?)
     }
 }

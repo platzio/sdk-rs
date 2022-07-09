@@ -7,7 +7,6 @@ use url::Url;
 
 #[derive(Deserialize)]
 enum AuthScheme {
-    HttpBasicPassword,
     Bearer,
 }
 
@@ -52,7 +51,7 @@ impl PlatzClientConfig {
         match (server_url, contents) {
             (Some(server_url), Some(contents)) => Ok(Self {
                 server_url,
-                scheme: AuthScheme::HttpBasicPassword,
+                scheme: AuthScheme::Bearer,
                 contents,
                 expires_at: None,
             }
@@ -81,7 +80,7 @@ impl PlatzClientConfig {
     /// Checks that the current credentials haven't expired
     pub fn expired(&self) -> bool {
         if let Some(expires_at) = self.expires_at {
-            expires_at >= Utc::now()
+            expires_at <= Utc::now()
         } else {
             false
         }
@@ -92,7 +91,6 @@ impl PlatzClientConfig {
     pub async fn get_authorization(&self) -> Result<String, PlatzClientError> {
         match self.scheme {
             AuthScheme::Bearer => Ok(format!("Bearer {}", self.contents)),
-            AuthScheme::HttpBasicPassword => Ok(base64::encode(format!("x:{}", self.contents))),
         }
     }
 }
