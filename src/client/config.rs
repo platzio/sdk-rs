@@ -1,16 +1,14 @@
 use super::error::PlatzClientError;
 use async_std::fs::read_to_string;
 use chrono::prelude::*;
-use serde::Deserialize;
+use futures::future::try_join3;
 use std::{env::var_os, ffi::OsString, io::ErrorKind};
 use url::Url;
 
-#[derive(Deserialize)]
 enum AuthScheme {
     Bearer,
 }
 
-#[derive(Deserialize)]
 pub(super) struct PlatzClientConfig {
     pub server_url: Url,
     scheme: AuthScheme,
@@ -61,15 +59,29 @@ impl PlatzClientConfig {
     }
 
     /// Try creating PlatzClient from files on disk. This works
-    /// inside deployments when mapping the `platz-auth` secret
+    /// inside deployments when mapping the `platz-creds` secret
     /// under `/var/run/secrets/platz`. The secret is rotated
     /// regularly by Platz.
     pub async fn new_from_secret() -> Result<Option<Self>, PlatzClientError> {
-        match read_to_string("/var/run/secrets/platz.json").await {
-            Ok(contents) => Ok(Some(
-                serde_json::from_str::<Self>(&contents)
-                    .map_err(PlatzClientError::ConfigParseError)?,
-            )),
+        match try_join3(
+            read_to_string("/var/run/secrets/platz/access_token"),
+            read_to_string("/var/run/secrets/platz/server_url"),
+            read_to_string("/var/run/secrets/platz/expires_at"),
+        )
+        .await
+        {
+            Ok((access_token, server_url, expires_at)) => Ok(Some(PlatzClientConfig {
+                server_url: server_url
+                    .parse()
+                    .map_err(PlatzClientError::MountedUrlParseError)?,
+                scheme: AuthScheme::Bearer,
+                contents: access_token,
+                expires_at: Some(
+                    expires_at
+                        .parse()
+                        .map_err(PlatzClientError::MountedExpiryParseError)?,
+                ),
+            })),
             Err(err) => match err.kind() {
                 ErrorKind::NotFound => Ok(None),
                 kind => Err(PlatzClientError::ConfigReadError(kind)),

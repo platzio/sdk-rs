@@ -9,8 +9,11 @@ pub enum PlatzClientError {
     #[error("Error parsing {0} environment variable")]
     EnvVarParseError(&'static str),
 
-    #[error("Error parsing mounted secret: {0}")]
-    ConfigParseError(serde_json::Error),
+    #[error("Error parsing URL from mounted credentials: {0}")]
+    MountedUrlParseError(url::ParseError),
+
+    #[error("Error parsing token expiry from mounted credentials: {0}")]
+    MountedExpiryParseError(chrono::ParseError),
 
     #[error("Error joining URL: {0}")]
     UrlJoinError(url::ParseError),
