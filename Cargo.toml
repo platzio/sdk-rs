@@ -4,7 +4,7 @@ edition = "2021"
 license-file = "LICENSE"
 name = "platz-sdk"
 repository = "https://github.com/platzio/sdk-rs"
-version = "0.4.1"
+version = "0.4.2"
 
 [features]
 default = ["uuid_08"]
@@ -18,7 +18,7 @@ base64 = "0.13.0"
 chrono = {version = "0.4.19", features = ["serde"]}
 kv-derive = "1.0.1"
 lazy_static = "1.4.0"
-reqwest = {version = "0.11.4", features = ["rustls-tls", "json", "gzip", "brotli", "deflate"]}
+reqwest = {version = "0.11.4", default-features = false, features = ["rustls-tls", "json", "gzip", "brotli", "deflate"]}
 rust_decimal = "1.17.0"
 serde = {version = "1", features = ["derive"]}
 serde_json = "1"
