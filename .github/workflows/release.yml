@@ -20,7 +20,7 @@ jobs:
 
       - name: 📦 Cargo clippy + build
         run: |
-          cargo clippy
+          cargo clippy -- -D warnings
           cargo build
 
       - name: 🚀 Publish Crate
