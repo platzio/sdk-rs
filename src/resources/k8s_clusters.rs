@@ -17,8 +17,9 @@ pub struct K8sCluster {
     pub is_ok: bool,
     pub not_ok_reason: Option<String>,
     pub ignore: bool,
-    pub domain: Option<String>,
-    pub domain_tls_secret_name: Option<String>,
+    pub ingress_domain: Option<String>,
+    pub ingress_class: Option<String>,
+    pub ingress_tls_secret_name: Option<String>,
     pub grafana_url: Option<String>,
     pub grafana_datasource_name: Option<String>,
 }
