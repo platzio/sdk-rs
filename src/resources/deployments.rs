@@ -3,9 +3,10 @@ use anyhow::Result;
 use chrono::prelude::*;
 use kv_derive::{prelude::*, IntoVec};
 use serde::{Deserialize, Serialize};
+use strum::Display;
 use uuid::Uuid;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Deployment {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
@@ -23,7 +24,7 @@ pub struct Deployment {
     pub values_override: Option<serde_json::Value>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone, Display)]
 pub enum DeploymentStatus {
     Unknown,
     Installing,

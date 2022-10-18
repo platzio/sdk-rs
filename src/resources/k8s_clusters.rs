@@ -2,10 +2,10 @@ use crate::client::PlatzClient;
 use anyhow::Result;
 use chrono::prelude::*;
 use kv_derive::{prelude::*, IntoVec};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct K8sCluster {
     pub id: Uuid,
     pub env_id: Option<Uuid>,
@@ -24,7 +24,7 @@ pub struct K8sCluster {
     pub grafana_datasource_name: Option<String>,
 }
 
-#[derive(Default, IntoVec)]
+#[derive(Default, IntoVec, Debug, Serialize)]
 pub struct K8sClusterFilters {
     #[kv(optional)]
     pub name: Option<String>,
