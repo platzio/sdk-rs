@@ -111,7 +111,7 @@ impl<'a> PlatzRequest<'a> {
             cur_page = self
                 .request_builder()
                 .await?
-                .query(&["page", &next_page.to_string()])
+                .query(&[("page", &next_page.to_string())])
                 .send()
                 .await?
                 .json()
