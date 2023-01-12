@@ -38,6 +38,17 @@ pub enum DeploymentStatus {
 }
 
 #[derive(Debug, Serialize)]
+pub struct NewDeployment {
+    #[serde(default)]
+    pub name: String,
+    pub kind: String,
+    pub cluster_id: Uuid,
+    pub helm_chart_id: Uuid,
+    pub config: Option<serde_json::Value>,
+    pub values_override: Option<serde_json::Value>,
+}
+
+#[derive(Debug, Serialize)]
 pub struct UpdateDeployment {
     pub name: Option<String>,
     pub cluster_id: Option<Uuid>,
@@ -69,6 +80,16 @@ impl PlatzClient {
             .await?)
     }
 
+    pub async fn deployment(&self, deployment_id: Uuid) -> Result<Deployment> {
+        Ok(self
+            .request(
+                reqwest::Method::GET,
+                format!("/api/v2/deployments/{deployment_id}"),
+            )
+            .send()
+            .await?)
+    }
+
     pub async fn update_deployment(
         &self,
         deployment_id: Uuid,
@@ -80,6 +101,13 @@ impl PlatzClient {
                 format!("/api/v2/deployments/{deployment_id}"),
             )
             .send_with_body(update_deployment)
+            .await?)
+    }
+
+    pub async fn create_deployment(&self, new_deployment: NewDeployment) -> Result<Deployment> {
+        Ok(self
+            .request(reqwest::Method::POST, "/api/v2/deployments")
+            .send_with_body(new_deployment)
             .await?)
     }
 }
