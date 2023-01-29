@@ -81,6 +81,20 @@ impl<'a> PlatzRequest<'a> {
             .query(&self.query))
     }
 
+    pub async fn send<T>(self) -> Result<T, PlatzClientError>
+    where
+        T: DeserializeOwned + Send,
+    {
+        Ok(self
+            .request_builder()
+            .await?
+            .send()
+            .await?
+            .error_for_status()?
+            .json()
+            .await?)
+    }
+
     #[instrument(skip_all, fields(path=self.path))]
     pub async fn send_with_body<T, R>(self, body: T) -> Result<R, PlatzClientError>
     where
@@ -93,6 +107,7 @@ impl<'a> PlatzRequest<'a> {
             .json(&body)
             .send()
             .await?
+            .error_for_status()?
             .json()
             .await?)
     }
@@ -103,7 +118,14 @@ impl<'a> PlatzRequest<'a> {
         T: DeserializeOwned + Send,
         Paginated<T>: DeserializeOwned + Send,
     {
-        let mut cur_page: Paginated<T> = self.request_builder().await?.send().await?.json().await?;
+        let mut cur_page: Paginated<T> = self
+            .request_builder()
+            .await?
+            .send()
+            .await?
+            .error_for_status()?
+            .json()
+            .await?;
         let mut items = cur_page.items;
 
         while cur_page.page * cur_page.per_page < cur_page.num_total {
@@ -114,6 +136,7 @@ impl<'a> PlatzRequest<'a> {
                 .query(&[("page", &next_page.to_string())])
                 .send()
                 .await?
+                .error_for_status()?
                 .json()
                 .await?;
             items.extend(cur_page.items.into_iter());

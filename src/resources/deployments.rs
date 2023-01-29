@@ -76,7 +76,7 @@ impl PlatzClient {
         Ok(self
             .request(
                 reqwest::Method::PUT,
-                format!("/api/v2/deployments/{}", deployment_id),
+                format!("/api/v2/deployments/{deployment_id}"),
             )
             .send_with_body(update_deployment)
             .await?)
