@@ -4,17 +4,12 @@ edition = "2021"
 license = "Apache-2.0"
 name = "platz-sdk"
 repository = "https://github.com/platzio/sdk-rs"
-version = "0.4.5"
-
-[features]
-default = ["uuid_08"]
-uuid_08 = ["dep:uuid08"]
-uuid_1 = ["dep:uuid1"]
+version = "0.5.0"
 
 [dependencies]
 anyhow = "1.0.56"
 async-std = "1.11.0"
-base64 = "0.13.0"
+base64 = "0.21.0"
 chrono = {version = "0.4.19", features = ["serde"]}
 futures = "0.3.21"
 kv-derive = "1.0.1"
@@ -27,5 +22,4 @@ strum = {version = "0.24", features = ["derive"]}
 thiserror = "1.0.30"
 tracing = "0.1.35"
 url = {version = "2.2.2", features = ["serde"]}
-uuid08 = {optional = true, package = "uuid", version = "0.8.2", features = ["serde"]}
-uuid1 = {optional = true, package = "uuid", version = "1", features = ["serde"]}
+uuid = {version = "1", features = ["serde"]}

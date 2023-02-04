@@ -1,9 +1,9 @@
 use crate::client::PlatzClient;
-use crate::types::Uuid;
 use anyhow::Result;
 use chrono::prelude::*;
 use kv_derive::{prelude::*, IntoVec};
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Debug, Deserialize)]
 pub struct Deployment {

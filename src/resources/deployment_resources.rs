@@ -1,8 +1,8 @@
-use crate::types::Uuid;
 use crate::PlatzClient;
 use anyhow::Result;
 use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct DeploymentResource {
