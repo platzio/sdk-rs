@@ -1,6 +1,6 @@
 use super::base::PlatzClient;
 use super::error::PlatzClientError;
-use reqwest::{header::AUTHORIZATION, ClientBuilder, RequestBuilder};
+use reqwest::{ClientBuilder, RequestBuilder};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::collections::HashMap;
 use tracing::instrument;
@@ -67,6 +67,7 @@ impl<'a> PlatzRequest<'a> {
     }
 
     async fn request_builder(&self) -> Result<RequestBuilder, PlatzClientError> {
+        let (header_key, header_value) = self.client.authorization().await?;
         Ok(ClientBuilder::new()
             .user_agent(HTTP_USER_AGENT.clone())
             .gzip(true)
@@ -77,7 +78,7 @@ impl<'a> PlatzRequest<'a> {
                 self.method.clone(),
                 self.client.build_url(&self.path).await?,
             )
-            .header(AUTHORIZATION, self.client.authorization().await?)
+            .header(header_key, header_value)
             .query(&self.query))
     }
 

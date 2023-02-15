@@ -1,10 +1,17 @@
 #[derive(Debug, thiserror::Error)]
 pub enum PlatzClientError {
-    #[error("Could not find any Platz config. Please set the PLATZ_URL and PLATZ_API_TOKEN environment variables. When running from inside a Platz deployment, mount the \"platz-creds\" secret to /var/run/secrets/platz.json .")]
+    #[error(r###"Could not find any Platz config. Use one of the following methods:
+    1. Set the PLATZ_URL and PLATZ_API_TOKEN environment variables.
+    2. Use "platz/config.toml" configuration file on your config directory.
+    2. When running from inside a Platz deployment, mount the "platz-creds" secret to /var/run/secrets/platz.json .
+"###)]
     NoConfigFound,
 
     #[error("OS error while trying to read config: {0:?}")]
     ConfigReadError(std::io::ErrorKind),
+
+    #[error("Error parsing configuration file: {0:?}")]
+    ConfigDeserializationError(toml::de::Error),
 
     #[error("Error parsing {0} environment variable")]
     EnvVarParseError(&'static str),

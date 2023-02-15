@@ -24,7 +24,7 @@ impl PlatzClient {
             .map_err(PlatzClientError::UrlJoinError)
     }
 
-    pub(super) async fn authorization(&self) -> Result<String, PlatzClientError> {
+    pub(super) async fn authorization(&self) -> Result<(String, String), PlatzClientError> {
         let mut config = self.config.write().await;
         if config.expired() {
             *config = PlatzClientConfig::new().await?;
