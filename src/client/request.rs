@@ -81,6 +81,15 @@ impl<'a> PlatzRequest<'a> {
             .query(&self.query))
     }
 
+    pub async fn send_with_no_response(self) -> Result<(), PlatzClientError> {
+        self.request_builder()
+            .await?
+            .send()
+            .await?
+            .error_for_status()?;
+        Ok(())
+    }
+
     pub async fn send<T>(self) -> Result<T, PlatzClientError>
     where
         T: DeserializeOwned + Send,
