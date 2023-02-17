@@ -23,6 +23,11 @@ pub struct NewUserToken {
     pub user_id: Option<Uuid>,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct UserTokenCreationResponse {
+    pub created_token: String,
+}
+
 impl PlatzClient {
     pub async fn user_tokens(&self, filters: UserTokenFilters) -> Result<Vec<UserToken>> {
         Ok(self
@@ -42,20 +47,23 @@ impl PlatzClient {
             .await?)
     }
 
-    pub async fn create_user_token(&self, new_user_token: NewUserToken) -> Result<UserToken> {
+    pub async fn create_user_token(
+        &self,
+        new_user_token: NewUserToken,
+    ) -> Result<UserTokenCreationResponse> {
         Ok(self
             .request(reqwest::Method::POST, "/api/v2/user-tokens")
             .send_with_body(new_user_token)
             .await?)
     }
 
-    pub async fn delete_user_token(&self, token_id: Uuid) -> Result<UserToken> {
+    pub async fn delete_user_token(&self, token_id: Uuid) -> Result<()> {
         Ok(self
             .request(
                 reqwest::Method::DELETE,
                 format!("/api/v2/user-tokens/{token_id}"),
             )
-            .send()
+            .send_with_no_response()
             .await?)
     }
 }
