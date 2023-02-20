@@ -13,6 +13,9 @@ pub enum PlatzClientError {
     #[error("Error parsing configuration file: {0:?}")]
     ConfigDeserializationError(toml::de::Error),
 
+    #[error("Error in configuration file: {0:?}")]
+    ConfigTomlError(&'static str),
+
     #[error("Error parsing {0} environment variable")]
     EnvVarParseError(&'static str),
 

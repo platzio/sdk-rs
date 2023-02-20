@@ -2,6 +2,7 @@ use super::config::PlatzClientConfig;
 use super::error::PlatzClientError;
 use super::request::PlatzRequest;
 use async_std::sync::RwLock;
+use reqwest::header::{HeaderName, HeaderValue};
 use reqwest::Url;
 
 pub struct PlatzClient {
@@ -24,16 +25,15 @@ impl PlatzClient {
             .map_err(PlatzClientError::UrlJoinError)
     }
 
-    pub(super) async fn authorization(&self) -> Result<(String, String), PlatzClientError> {
+    pub(super) async fn authorization(
+        &self,
+    ) -> Result<(HeaderName, HeaderValue), PlatzClientError> {
         let mut config = self.config.write().await;
         if config.expired() {
             *config = PlatzClientConfig::new().await?;
         }
 
-        config
-            .get_authorization()
-            .await
-            .map_err(|_| PlatzClientError::ErrorCreatingAuthHeader)
+        config.get_authorization().await
     }
 
     pub fn request<S>(&self, method: reqwest::Method, path: S) -> PlatzRequest
