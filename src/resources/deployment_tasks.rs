@@ -23,9 +23,9 @@ pub struct DeploymentTaskFilters {
     #[kv(optional)]
     pub deployment_id: Option<Uuid>,
     #[kv(optional)]
-    active_only: Option<bool>,
+    pub active_only: Option<bool>,
     #[kv(optional)]
-    created_from: Option<DateTime<Utc>>,
+    pub created_from: Option<DateTime<Utc>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -53,6 +53,20 @@ pub enum DeploymentTaskOperation {
     Uninstall(DeploymentUninstallTask),
     InvokeAction(DeploymentInvokeActionTask),
     RestartK8sResource(DeploymentRestartK8sResourceTask),
+}
+
+impl DeploymentTaskOperation {
+    pub fn get_type_name(&self) -> String {
+        match self {
+            Self::Install(_) => "Install".into(),
+            Self::Upgrade(_) => "Upgrade".into(),
+            Self::Reinstall(_) => "Reinstall".into(),
+            Self::Recreate(_) => "Recreate".into(),
+            Self::Uninstall(_) => "Uninstall".into(),
+            Self::InvokeAction(_) => "Invoke Action".into(),
+            Self::RestartK8sResource(_) => "Restart K8s Resource".into(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
