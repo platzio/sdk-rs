@@ -55,6 +55,20 @@ pub enum DeploymentTaskOperation {
     RestartK8sResource(DeploymentRestartK8sResourceTask),
 }
 
+impl DeploymentTaskOperation {
+    pub fn get_type_name(&self) -> String {
+        match self {
+            Self::Install(_) => "Install".into(),
+            Self::Upgrade(_) => "Upgrade".into(),
+            Self::Reinstall(_) => "Reinstall".into(),
+            Self::Recreate(_) => "Recreate".into(),
+            Self::Uninstall(_) => "Uninstall".into(),
+            Self::InvokeAction(_) => "Invoke Action".into(),
+            Self::RestartK8sResource(_) => "Restart K8s Resource".into(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DeploymentInstallTask {
     pub helm_chart_id: Uuid,
