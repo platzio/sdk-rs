@@ -23,9 +23,9 @@ pub struct DeploymentTaskFilters {
     #[kv(optional)]
     pub deployment_id: Option<Uuid>,
     #[kv(optional)]
-    active_only: Option<bool>,
+    pub active_only: Option<bool>,
     #[kv(optional)]
-    created_from: Option<DateTime<Utc>>,
+    pub created_from: Option<DateTime<Utc>>,
 }
 
 #[derive(Debug, Deserialize)]
