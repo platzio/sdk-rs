@@ -28,6 +28,12 @@ pub struct DeploymentTaskFilters {
     pub created_from: Option<DateTime<Utc>>,
 }
 
+#[derive(Debug, Serialize)]
+pub struct ApiNewDeploymentTask {
+    pub deployment_id: Uuid,
+    pub operation: DeploymentTaskOperation,
+}
+
 #[derive(Debug, Deserialize)]
 pub struct DeploymentTask {
     pub id: Uuid,
@@ -122,6 +128,16 @@ impl PlatzClient {
             .request(reqwest::Method::GET, "/api/v2/deployment-tasks")
             .add_to_query(filters.into_vec())
             .paginated()
+            .await?)
+    }
+
+    pub async fn create_deployment_task(
+        &self,
+        new_task: ApiNewDeploymentTask,
+    ) -> Result<DeploymentTask> {
+        Ok(self
+            .request(reqwest::Method::POST, "/api/v2/deployment-tasks")
+            .send_with_body(new_task)
             .await?)
     }
 }
