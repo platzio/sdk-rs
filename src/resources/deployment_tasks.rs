@@ -63,7 +63,7 @@ impl DeploymentTaskOperation {
             Self::Reinstall(_) => "Reinstall".into(),
             Self::Recreate(_) => "Recreate".into(),
             Self::Uninstall(_) => "Uninstall".into(),
-            Self::InvokeAction(_) => "Invoke Action".into(),
+            Self::InvokeAction(x) => format!("Invoke Action {}", x.action_id),
             Self::RestartK8sResource(_) => "Restart K8s Resource".into(),
         }
     }
