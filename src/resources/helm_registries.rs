@@ -5,7 +5,7 @@ use kv_derive::{prelude::*, IntoVec};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct HelmRegistry {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,

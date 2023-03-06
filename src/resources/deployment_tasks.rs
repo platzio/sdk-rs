@@ -7,7 +7,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 use uuid::Uuid;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub enum DeploymentTaskStatus {
     Pending,
     Started,
@@ -34,7 +34,7 @@ pub struct ApiNewDeploymentTask {
     pub operation: DeploymentTaskOperation,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct DeploymentTask {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
