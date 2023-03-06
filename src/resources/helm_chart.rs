@@ -1,5 +1,5 @@
 use crate::client::PlatzClient;
-use anyhow::Result;
+use anyhow::{bail, Result};
 use chrono::prelude::*;
 use kv_derive::{prelude::*, IntoVec};
 use serde::Deserialize;
@@ -23,6 +23,20 @@ pub struct HelmChart {
     pub parsed_revision: Option<String>,
     pub parsed_branch: Option<String>,
     pub parsed_commit: Option<String>,
+}
+
+impl HelmChart {
+    pub fn get_actions_schema(&self) -> Result<platz_chart_ext::ChartExtActions> {
+        match self.actions_schema.as_ref() {
+            Some(value) => {
+                match serde_json::from_value::<platz_chart_ext::ChartExtActions>(value.clone()) {
+                    Ok(schema) => Ok(schema),
+                    Err(err) => bail!("Failed parsing actions schema of helm chart: {err}"),
+                }
+            }
+            None => bail!("No actions schema for helm chart"),
+        }
+    }
 }
 
 #[derive(Default, IntoVec)]

@@ -66,7 +66,7 @@ impl<'a> PlatzRequest<'a> {
         self
     }
 
-    async fn request_builder(&self) -> Result<RequestBuilder, PlatzClientError> {
+    pub async fn request_builder(&self) -> Result<RequestBuilder, PlatzClientError> {
         let (header_key, header_value) = self.client.authorization().await?;
         Ok(ClientBuilder::new()
             .user_agent(HTTP_USER_AGENT.clone())

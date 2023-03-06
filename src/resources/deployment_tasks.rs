@@ -7,7 +7,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 use uuid::Uuid;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub enum DeploymentTaskStatus {
     Pending,
     Started,
@@ -28,7 +28,13 @@ pub struct DeploymentTaskFilters {
     pub created_from: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize)]
+pub struct ApiNewDeploymentTask {
+    pub deployment_id: Uuid,
+    pub operation: DeploymentTaskOperation,
+}
+
+#[derive(Debug, Deserialize, Clone)]
 pub struct DeploymentTask {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
@@ -63,7 +69,7 @@ impl DeploymentTaskOperation {
             Self::Reinstall(_) => "Reinstall".into(),
             Self::Recreate(_) => "Recreate".into(),
             Self::Uninstall(_) => "Uninstall".into(),
-            Self::InvokeAction(_) => "Invoke Action".into(),
+            Self::InvokeAction(x) => format!("Invoke Action {}", x.action_id),
             Self::RestartK8sResource(_) => "Restart K8s Resource".into(),
         }
     }
@@ -122,6 +128,16 @@ impl PlatzClient {
             .request(reqwest::Method::GET, "/api/v2/deployment-tasks")
             .add_to_query(filters.into_vec())
             .paginated()
+            .await?)
+    }
+
+    pub async fn create_deployment_task(
+        &self,
+        new_task: ApiNewDeploymentTask,
+    ) -> Result<DeploymentTask> {
+        Ok(self
+            .request(reqwest::Method::POST, "/api/v2/deployment-tasks")
+            .send_with_body(new_task)
             .await?)
     }
 }
