@@ -13,7 +13,6 @@ pub struct Secret {
     pub env_id: Uuid,
     pub collection: String,
     pub name: String,
-    pub contents: String,
 }
 
 #[derive(Default, IntoVec)]
