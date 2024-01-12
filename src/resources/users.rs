@@ -12,6 +12,7 @@ pub struct User {
     pub display_name: String,
     pub email: String,
     pub is_admin: bool,
+    pub is_active: bool,
 }
 
 #[derive(Default, IntoVec)]
@@ -20,11 +21,14 @@ pub struct UserFilter {
     pub display_name: Option<String>,
     #[kv(optional)]
     pub email: Option<String>,
+    #[kv(optional)]
+    pub is_active: Option<bool>,
 }
 
 #[derive(Debug, Serialize)]
 pub struct UpdateUser {
     pub is_admin: Option<bool>,
+    pub is_active: Option<bool>,
 }
 
 impl PlatzClient {

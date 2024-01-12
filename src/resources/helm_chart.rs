@@ -15,7 +15,7 @@ pub struct HelmChart {
     pub available: bool,
     pub values_ui: Option<serde_json::Value>,
     pub actions_schema: Option<serde_json::Value>,
-    pub features: Option<serde_json::Value>,
+    pub features: Option<platz_chart_ext::ChartExtFeatures>,
     pub resource_types: Option<serde_json::Value>,
     pub error: Option<String>,
     pub tag_format_id: Option<Uuid>,
@@ -36,6 +36,16 @@ impl HelmChart {
             }
             None => bail!("No actions schema for helm chart"),
         }
+    }
+
+    pub fn get_actions(&self) -> Result<Vec<platz_chart_ext::ChartExtActionV0>> {
+        Ok(if let Some(actions_schema) = self.actions_schema.as_ref() {
+            let ext_actions =
+                serde_json::from_value::<platz_chart_ext::ChartExtActions>(actions_schema.clone())?;
+            ext_actions.get_actions()
+        } else {
+            Vec::new()
+        })
     }
 }
 

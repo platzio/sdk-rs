@@ -27,6 +27,8 @@ pub struct K8sCluster {
 #[derive(Default, IntoVec, Debug, Serialize)]
 pub struct K8sClusterFilters {
     #[kv(optional)]
+    pub env_id: Option<Uuid>,
+    #[kv(optional)]
     pub name: Option<String>,
 }
 
