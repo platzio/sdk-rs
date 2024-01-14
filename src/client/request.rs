@@ -1,5 +1,6 @@
 use super::base::PlatzClient;
 use super::error::PlatzClientError;
+use async_trait::async_trait;
 use reqwest::{ClientBuilder, RequestBuilder};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::collections::HashMap;
@@ -87,7 +88,8 @@ impl<'a> PlatzRequest<'a> {
             .await?
             .send()
             .await?
-            .error_for_status()?;
+            .error_for_status_with_body()
+            .await?;
         Ok(())
     }
 
@@ -100,7 +102,8 @@ impl<'a> PlatzRequest<'a> {
             .await?
             .send()
             .await?
-            .error_for_status()?
+            .error_for_status_with_body()
+            .await?
             .json()
             .await?)
     }
@@ -117,7 +120,8 @@ impl<'a> PlatzRequest<'a> {
             .json(&body)
             .send()
             .await?
-            .error_for_status()?
+            .error_for_status_with_body()
+            .await?
             .json()
             .await?)
     }
@@ -133,7 +137,8 @@ impl<'a> PlatzRequest<'a> {
             .await?
             .send()
             .await?
-            .error_for_status()?
+            .error_for_status_with_body()
+            .await?
             .json()
             .await?;
         let mut items = cur_page.items;
@@ -146,7 +151,8 @@ impl<'a> PlatzRequest<'a> {
                 .query(&[("page", &next_page.to_string())])
                 .send()
                 .await?
-                .error_for_status()?
+                .error_for_status_with_body()
+                .await?
                 .json()
                 .await?;
             items.extend(cur_page.items.into_iter());
@@ -166,6 +172,29 @@ impl<'a> PlatzRequest<'a> {
             0 => Err(PlatzClientError::ExpectedOneGotNone),
             1 => Ok(items.into_iter().next().unwrap()),
             n => Err(PlatzClientError::ExpectedOneGotMany(n)),
+        }
+    }
+}
+#[async_trait]
+trait ResponseExt {
+    async fn error_for_status_with_body(self) -> Result<reqwest::Response, PlatzClientError>;
+}
+
+#[async_trait]
+impl ResponseExt for reqwest::Response {
+    async fn error_for_status_with_body(self) -> Result<reqwest::Response, PlatzClientError> {
+        let status = self.status();
+        if status.is_success() {
+            Ok(self)
+        } else {
+            let body = self
+                .text()
+                .await
+                .ok()
+                .map(|s| format!(": {s:?}"))
+                .unwrap_or_default();
+            let err_msg = format!("{status}{body}");
+            Err(PlatzClientError::HttpError(err_msg))
         }
     }
 }

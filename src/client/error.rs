@@ -31,6 +31,9 @@ pub enum PlatzClientError {
     #[error("Error building client: {0}")]
     ReqwestError(#[from] reqwest::Error),
 
+    #[error("HTTP Error: {0}")]
+    HttpError(String),
+
     #[error("Error creating authorization header")]
     ErrorCreatingAuthHeader,
 
