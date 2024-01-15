@@ -14,8 +14,8 @@ pub struct HelmChart {
     pub image_tag: String,
     pub available: bool,
     pub values_ui: Option<serde_json::Value>,
-    pub actions_schema: Option<serde_json::Value>,
-    pub features: Option<serde_json::Value>,
+    pub actions_schema: Option<platz_chart_ext::ChartExtActions>,
+    pub features: Option<platz_chart_ext::ChartExtFeatures>,
     pub resource_types: Option<serde_json::Value>,
     pub error: Option<String>,
     pub tag_format_id: Option<Uuid>,
@@ -28,14 +28,17 @@ pub struct HelmChart {
 impl HelmChart {
     pub fn get_actions_schema(&self) -> Result<platz_chart_ext::ChartExtActions> {
         match self.actions_schema.as_ref() {
-            Some(value) => {
-                match serde_json::from_value::<platz_chart_ext::ChartExtActions>(value.clone()) {
-                    Ok(schema) => Ok(schema),
-                    Err(err) => bail!("Failed parsing actions schema of helm chart: {err}"),
-                }
-            }
+            Some(schema) => Ok(schema.clone()),
             None => bail!("No actions schema for helm chart"),
         }
+    }
+
+    pub fn get_actions(&self) -> Result<Vec<platz_chart_ext::ChartExtActionV0>> {
+        Ok(if let Some(actions_schema) = self.actions_schema.as_ref() {
+            actions_schema.get_actions()
+        } else {
+            Vec::new()
+        })
     }
 }
 

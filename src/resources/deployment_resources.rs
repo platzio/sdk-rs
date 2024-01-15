@@ -1,10 +1,11 @@
 use crate::PlatzClient;
 use anyhow::Result;
 use chrono::prelude::*;
+use kv_derive::{prelude::*, IntoVec};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct DeploymentResource {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
@@ -28,7 +29,36 @@ pub struct NewDeploymentResource {
     pub sync_status: Option<SyncStatus>,
 }
 
+#[derive(Default, IntoVec)]
+pub struct DeploymentResourceFilters {
+    #[kv(optional)]
+    pub type_id: Option<Uuid>,
+}
+
 impl PlatzClient {
+    pub async fn deployment_resources(
+        &self,
+        filters: DeploymentResourceFilters,
+    ) -> Result<Vec<DeploymentResource>> {
+        Ok(self
+            .request(reqwest::Method::GET, "/api/v2/deployment-resource-types")
+            .add_to_query(filters.into_vec())
+            .paginated()
+            .await?)
+    }
+    pub async fn deployment_resource(
+        &self,
+        deployment_resource_id: Uuid,
+    ) -> Result<DeploymentResource> {
+        Ok(self
+            .request(
+                reqwest::Method::POST,
+                format!("/api/v2/deployment-resources/{deployment_resource_id}"),
+            )
+            .send()
+            .await?)
+    }
+
     pub async fn create_deployment_resource(
         &self,
         values: NewDeploymentResource,
@@ -40,7 +70,7 @@ impl PlatzClient {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum SyncStatus {
     Creating,
     Updating,
