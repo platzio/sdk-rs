@@ -69,6 +69,8 @@ pub struct DeploymentFilters {
     pub cluster_id: Option<Uuid>,
     #[kv(optional)]
     pub enabled: Option<bool>,
+    #[kv(optional)]
+    pub env_id: Option<Uuid>,
 }
 
 impl PlatzClient {
