@@ -41,7 +41,7 @@ impl PlatzClient {
         filters: DeploymentResourceFilters,
     ) -> Result<Vec<DeploymentResource>> {
         Ok(self
-            .request(reqwest::Method::GET, "/api/v2/deployment-resource-types")
+            .request(reqwest::Method::GET, "/api/v2/deployment-resources")
             .add_to_query(filters.into_vec())
             .paginated()
             .await?)
