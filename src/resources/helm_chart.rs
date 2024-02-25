@@ -13,7 +13,7 @@ pub struct HelmChart {
     pub image_digest: String,
     pub image_tag: String,
     pub available: bool,
-    pub values_ui: Option<serde_json::Value>,
+    pub values_ui: Option<platz_chart_ext::UiSchema>,
     pub actions_schema: Option<platz_chart_ext::ChartExtActions>,
     pub features: Option<platz_chart_ext::ChartExtFeatures>,
     pub resource_types: Option<serde_json::Value>,

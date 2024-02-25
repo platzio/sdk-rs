@@ -16,7 +16,7 @@ dirs = "5.0.1"
 futures = "0.3.30"
 kv-derive = "1.0.1"
 lazy_static = "1.4.0"
-platz-chart-ext = "0.5.12"
+platz-chart-ext = "0.5.13"
 reqwest = {version = "0.11.24", default-features = false, features = ["rustls-tls", "json", "gzip", "brotli", "deflate"]}
 rust_decimal = "1.34.0"
 serde = {version = "1", features = ["derive"]}
