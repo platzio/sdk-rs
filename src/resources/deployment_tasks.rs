@@ -12,6 +12,7 @@ pub enum DeploymentTaskStatus {
     Pending,
     Started,
     Failed,
+    Canceled,
     Done,
 }
 
@@ -24,6 +25,8 @@ pub struct DeploymentTaskFilters {
     pub deployment_id: Option<Uuid>,
     #[kv(optional)]
     pub active_only: Option<bool>,
+    #[kv(optional)]
+    pub show_future: Option<bool>,
     #[kv(optional)]
     pub created_from: Option<DateTime<Utc>>,
 }
@@ -50,6 +53,8 @@ pub struct DeploymentTask {
     pub operation: DeploymentTaskOperation,
     pub status: DeploymentTaskStatus,
     pub reason: Option<String>,
+    pub canceled_by_user_id: Option<Uuid>,
+    pub canceled_by_deployment_id: Option<Uuid>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -121,6 +126,11 @@ pub struct DeploymentRestartK8sResourceTask {
     pub resource_name: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CancelDeploymentTask {
+    pub reason: Option<String>,
+}
+
 impl PlatzClient {
     pub async fn deployment_tasks(
         &self,
@@ -140,6 +150,20 @@ impl PlatzClient {
                 format!("/api/v2/deployment-tasks/{deployment_task_id}"),
             )
             .send()
+            .await?)
+    }
+
+    pub async fn cancel_deployment_task(
+        &self,
+        deployment_task_id: Uuid,
+        info: CancelDeploymentTask,
+    ) -> Result<DeploymentTask> {
+        Ok(self
+            .request(
+                reqwest::Method::DELETE,
+                format!("/api/v2/deployment-tasks/{deployment_task_id}"),
+            )
+            .send_with_body(info)
             .await?)
     }
 
