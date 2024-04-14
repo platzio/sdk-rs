@@ -18,6 +18,12 @@ pub struct DeploymentResource {
     pub sync_reason: Option<String>,
 }
 
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct UpdateDeploymentResource {
+    pub name: Option<String>,
+    pub props: Option<serde_json::Value>,
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct NewDeploymentResource {
     pub id: Option<Uuid>,
@@ -66,6 +72,20 @@ impl PlatzClient {
         Ok(self
             .request(reqwest::Method::POST, "/api/v2/deployment-resources")
             .send_with_body(values)
+            .await?)
+    }
+
+    pub async fn update_deployment_resource(
+        &self,
+        deployment_resource_id: Uuid,
+        update_deployment_resource: UpdateDeploymentResource,
+    ) -> Result<DeploymentResource> {
+        Ok(self
+            .request(
+                reqwest::Method::PUT,
+                format!("/api/v2/deployment-resources/{}", deployment_resource_id),
+            )
+            .send_with_body(update_deployment_resource)
             .await?)
     }
 }
