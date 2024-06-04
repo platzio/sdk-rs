@@ -94,6 +94,12 @@ pub(super) struct PlatzClientConfig {
     expires_at: Option<DateTime<Utc>>,
 }
 
+fn get_env_var_or_value(env_var_name: &'static str) -> Result<Option<String>, PlatzClientError> {
+    var_os(env_var_name)
+        .map(OsString::into_string)
+        .transpose()
+        .map_err(move |_| PlatzClientError::EnvVarParseError(env_var_name))
+}
 impl PlatzClientConfig {
     /// Create a new PlatzClient by trying new_from_env, then
     /// new_from_secret, whichever succeeds first.
@@ -115,21 +121,22 @@ impl PlatzClientConfig {
     /// If the variables exist and there's an error parsing them, this error is
     /// returned and no further configuration would be loaded.
     pub fn new_from_env() -> Result<Option<Self>, PlatzClientError> {
-        let server_url: Option<Url> = var_os("PLATZ_URL")
-            .map(OsString::into_string)
-            .transpose()
-            .map_err(|_| PlatzClientError::EnvVarParseError("PLATZ_URL"))?
+        let server_url: Option<Url> = get_env_var_or_value("PLATZ_URL")?
             .map(|str| Url::parse(&str))
             .transpose()
             .map_err(|_| PlatzClientError::EnvVarParseError("PLATZ_URL"))?;
-        let contents = var_os("PLATZ_API_TOKEN")
-            .map(OsString::into_string)
-            .transpose()
-            .map_err(|_| PlatzClientError::EnvVarParseError("PLATZ_API_TOKEN"))?;
+        let (scheme, contents) = if let Some(api_token) = get_env_var_or_value("PLATZ_API_TOKEN")? {
+            (AuthScheme::Bearer, Some(api_token))
+        } else {
+            (
+                AuthScheme::XPlatzToken,
+                get_env_var_or_value("PLATZ_USER_TOKEN")?,
+            )
+        };
         match (server_url, contents) {
             (Some(server_url), Some(contents)) => Ok(Self {
                 server_url,
-                scheme: AuthScheme::Bearer,
+                scheme,
                 contents,
                 expires_at: None,
             }
@@ -219,7 +226,9 @@ impl PlatzClientConfig {
     pub async fn new_from_configuration(
         server_name: Option<String>,
     ) -> Result<Option<Self>, PlatzClientError> {
-        let Some(home_dir) = dirs::home_dir() else { return Ok(None) };
+        let Some(home_dir) = dirs::home_dir() else {
+            return Ok(None);
+        };
         let mut conf_path = home_dir;
         conf_path.push(".config");
         let config_data = Self::from_config_toml(Some(conf_path), &server_name).await?;
