@@ -1,4 +1,4 @@
-use crate::client::PlatzClient;
+use crate::client::{Paginated, PlatzClient};
 use anyhow::Result;
 use chrono::prelude::*;
 use kv_derive::{prelude::*, IntoVec};
@@ -151,6 +151,21 @@ impl PlatzClient {
             )
             .send()
             .await?)
+    }
+
+    pub async fn last_deployment_task(&self, deployment_id: Uuid) -> Result<DeploymentTask> {
+        let single_page_tasks: Paginated<DeploymentTask> = self
+            .request(reqwest::Method::GET, "/api/v2/deployment-tasks")
+            .add_to_query(
+                DeploymentTaskFilters {
+                    deployment_id: Some(deployment_id),
+                    ..DeploymentTaskFilters::default()
+                }
+                .into_vec(),
+            )
+            .single_page(1, Some(1))
+            .await?;
+        Ok(single_page_tasks.items.first().unwrap().to_owned())
     }
 
     pub async fn cancel_deployment_task(
