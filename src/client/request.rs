@@ -126,35 +126,45 @@ impl<'a> PlatzRequest<'a> {
             .await?)
     }
 
-    #[instrument(skip_all, fields(path=self.path))]
-    pub async fn paginated<T>(self) -> Result<Vec<T>, PlatzClientError>
+    pub async fn single_page<T>(
+        &self,
+        page_index: i64,
+        page_size: Option<i64>,
+    ) -> Result<Paginated<T>, PlatzClientError>
     where
         T: DeserializeOwned + Send,
         Paginated<T>: DeserializeOwned + Send,
     {
-        let mut cur_page: Paginated<T> = self
+        let mut paging_info = vec![("page", page_index.to_string())];
+        if let Some(size) = page_size {
+            paging_info.push(("page_size", size.to_string()))
+        }
+        let page = self
             .request_builder()
             .await?
+            .query(&paging_info)
             .send()
             .await?
             .error_for_status_with_body()
             .await?
             .json()
             .await?;
+        Ok(page)
+    }
+
+    #[instrument(skip_all, fields(path=self.path))]
+    pub async fn paginated<T>(self) -> Result<Vec<T>, PlatzClientError>
+    where
+        T: DeserializeOwned + Send,
+        Paginated<T>: DeserializeOwned + Send,
+    {
+        let page_size: Option<i64> = None;
+        let mut cur_page = self.single_page(1, page_size).await?;
         let mut items = cur_page.items;
 
         while cur_page.page * cur_page.per_page < cur_page.num_total {
             let next_page = cur_page.page + 1;
-            cur_page = self
-                .request_builder()
-                .await?
-                .query(&[("page", &next_page.to_string())])
-                .send()
-                .await?
-                .error_for_status_with_body()
-                .await?
-                .json()
-                .await?;
+            cur_page = self.single_page(next_page, page_size).await?;
             items.extend(cur_page.items.into_iter());
         }
 
