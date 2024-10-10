@@ -24,7 +24,7 @@ impl PlatzClient {
         filters: DeploymentKindFilters,
     ) -> Result<Vec<DeploymentKind>> {
         Ok(self
-            .request(reqwest::Method::GET, "/api/v2/deployments")
+            .request(reqwest::Method::GET, "/api/v2/deployment-kinds")
             .add_to_query(filters.into_vec())
             .paginated()
             .await?)
