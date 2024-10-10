@@ -1,3 +1,4 @@
+mod deployment_kinds;
 mod deployment_resource_types;
 mod deployment_resources;
 mod deployment_tasks;
@@ -11,6 +12,7 @@ mod secrets;
 mod user_tokens;
 mod users;
 
+pub use deployment_kinds::*;
 pub use deployment_resource_types::*;
 pub use deployment_resources::*;
 pub use deployment_tasks::*;

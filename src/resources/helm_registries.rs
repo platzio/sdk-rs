@@ -11,7 +11,7 @@ pub struct HelmRegistry {
     pub created_at: DateTime<Utc>,
     pub domain_name: String,
     pub repo_name: String,
-    pub kind: String,
+    pub kind_id: Uuid,
     pub available: bool,
     pub fa_icon: String,
 }
@@ -21,7 +21,7 @@ pub struct HelmRegistryFilters {
     #[kv(optional)]
     pub repo_name: Option<String>,
     #[kv(optional)]
-    pub kind: Option<String>,
+    pub kind_id: Option<Uuid>,
 }
 
 #[derive(Debug, Serialize)]

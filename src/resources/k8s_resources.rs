@@ -11,7 +11,7 @@ pub struct K8sResource {
     pub last_updated_at: DateTime<Utc>,
     pub cluster_id: Uuid,
     pub deployment_id: Uuid,
-    pub kind: String,
+    pub kind_id: Uuid,
     pub api_version: String,
     pub name: String,
     pub status_color: Vec<String>,
@@ -23,7 +23,7 @@ pub struct K8sResourceFilters {
     #[kv(optional)]
     pub name: Option<String>,
     #[kv(optional)]
-    pub kind: Option<String>,
+    pub kind_id: Option<Uuid>,
     #[kv(optional)]
     pub cluster_id: Option<Uuid>,
     #[kv(optional)]

@@ -11,7 +11,7 @@ pub struct Deployment {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
     pub name: String,
-    pub kind: String,
+    pub kind_id: Uuid,
     pub cluster_id: Uuid,
     pub enabled: bool,
     pub status: DeploymentStatus,
@@ -41,7 +41,7 @@ pub enum DeploymentStatus {
 pub struct NewDeployment {
     #[serde(default)]
     pub name: String,
-    pub kind: String,
+    pub kind_id: Uuid,
     pub cluster_id: Uuid,
     pub helm_chart_id: Uuid,
     pub config: Option<serde_json::Value>,
@@ -64,7 +64,7 @@ pub struct DeploymentFilters {
     #[kv(optional)]
     pub name: Option<String>,
     #[kv(optional)]
-    pub kind: Option<String>,
+    pub kind_id: Option<String>,
     #[kv(optional)]
     pub cluster_id: Option<Uuid>,
     #[kv(optional)]

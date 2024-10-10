@@ -51,7 +51,7 @@ pub struct HelmChartFilters {
     #[kv(optional)]
     pub in_use: Option<bool>,
     #[kv(optional)]
-    pub kind: Option<String>,
+    pub kind_id: Option<Uuid>,
 }
 
 impl PlatzClient {

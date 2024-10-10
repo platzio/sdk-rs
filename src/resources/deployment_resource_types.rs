@@ -10,7 +10,7 @@ pub struct DeploymentResourceType {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
     pub env_id: Option<Uuid>,
-    pub deployment_kind: String,
+    pub deployment_kind_id: Uuid,
     pub key: String,
     pub spec: serde_json::Value,
 }
@@ -20,7 +20,7 @@ pub struct DeploymentResourceTypeFilters {
     #[kv(optional)]
     pub env_id: Option<Uuid>,
     #[kv(optional)]
-    pub deployment_kind: Option<String>,
+    pub deployment_kind_id: Option<Uuid>,
     #[kv(optional)]
     pub key: Option<String>,
 }
@@ -59,12 +59,12 @@ impl PlatzClient {
 
     pub async fn find_global_deployment_resource_type(
         self,
-        deployment_kind: String,
+        deployment_kind_id: Uuid,
         key: String,
     ) -> Result<DeploymentResourceType> {
         Ok(self
             .deployment_resource_types_request_builder(DeploymentResourceTypeFilters {
-                deployment_kind: Some(deployment_kind),
+                deployment_kind_id: Some(deployment_kind_id),
                 key: Some(key),
                 ..DeploymentResourceTypeFilters::default()
             })
@@ -75,13 +75,13 @@ impl PlatzClient {
     pub async fn find_deployment_resource_type(
         self,
         env_id: Uuid,
-        deployment_kind: String,
+        deployment_kind_id: Uuid,
         key: String,
     ) -> Result<DeploymentResourceType> {
         Ok(self
             .deployment_resource_types_request_builder(DeploymentResourceTypeFilters {
                 env_id: Some(env_id),
-                deployment_kind: Some(deployment_kind),
+                deployment_kind_id: Some(deployment_kind_id),
                 key: Some(key),
             })
             .paginated_expect_one()
