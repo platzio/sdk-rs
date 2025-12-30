@@ -48,7 +48,7 @@ pub struct NewDeployment {
     pub values_override: Option<serde_json::Value>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Default)]
 pub struct UpdateDeployment {
     pub name: Option<String>,
     pub cluster_id: Option<Uuid>,

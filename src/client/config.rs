@@ -126,10 +126,10 @@ impl PlatzClientConfig {
             .transpose()
             .map_err(|_| PlatzClientError::EnvVarParseError("PLATZ_URL"))?;
         let (scheme, contents) = if let Some(api_token) = get_env_var_or_value("PLATZ_API_TOKEN")? {
-            (AuthScheme::Bearer, Some(api_token))
+            (AuthScheme::XPlatzToken, Some(api_token))
         } else {
             (
-                AuthScheme::XPlatzToken,
+                AuthScheme::Bearer,
                 get_env_var_or_value("PLATZ_USER_TOKEN")?,
             )
         };
