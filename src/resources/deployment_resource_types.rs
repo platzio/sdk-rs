@@ -1,7 +1,7 @@
 use crate::{PlatzClient, PlatzRequest};
 use anyhow::Result;
 use chrono::prelude::*;
-use kv_derive::{prelude::*, IntoVec};
+use kv_derive::{IntoVec, prelude::*};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -25,11 +25,11 @@ pub struct DeploymentResourceTypeFilters {
     pub key: Option<String>,
 }
 
-impl PlatzClient {
+impl<'s> PlatzClient {
     fn deployment_resource_types_request_builder(
-        &self,
+        &'s self,
         filters: DeploymentResourceTypeFilters,
-    ) -> PlatzRequest {
+    ) -> PlatzRequest<'s> {
         self.request(reqwest::Method::GET, "/api/v2/deployment-resource-types")
             .add_to_query(filters.into_vec())
     }

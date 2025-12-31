@@ -2,7 +2,7 @@ use super::base::PlatzClient;
 use super::error::PlatzClientError;
 use async_trait::async_trait;
 use reqwest::{ClientBuilder, RequestBuilder};
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use std::collections::HashMap;
 use tracing::instrument;
 

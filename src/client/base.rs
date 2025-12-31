@@ -2,14 +2,14 @@ use super::config::PlatzClientConfig;
 use super::error::PlatzClientError;
 use super::request::PlatzRequest;
 use async_std::sync::RwLock;
-use reqwest::header::{HeaderName, HeaderValue};
 use reqwest::Url;
+use reqwest::header::{HeaderName, HeaderValue};
 
 pub struct PlatzClient {
     config: RwLock<PlatzClientConfig>,
 }
 
-impl PlatzClient {
+impl<'s> PlatzClient {
     pub async fn new() -> Result<Self, PlatzClientError> {
         Ok(Self {
             config: RwLock::new(PlatzClientConfig::new().await?),
@@ -36,7 +36,7 @@ impl PlatzClient {
         config.get_authorization().await
     }
 
-    pub fn request<S>(&self, method: reqwest::Method, path: S) -> PlatzRequest
+    pub fn request<S>(&'s self, method: reqwest::Method, path: S) -> PlatzRequest<'s>
     where
         S: AsRef<str>,
     {

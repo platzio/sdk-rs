@@ -1,7 +1,7 @@
 use crate::PlatzClient;
 use anyhow::Result;
 use chrono::prelude::*;
-use kv_derive::{prelude::*, IntoVec};
+use kv_derive::{IntoVec, prelude::*};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -90,17 +90,12 @@ impl PlatzClient {
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub enum SyncStatus {
+    #[default]
     Creating,
     Updating,
     Deleting,
     Ready,
     Error,
-}
-
-impl Default for SyncStatus {
-    fn default() -> Self {
-        Self::Creating
-    }
 }

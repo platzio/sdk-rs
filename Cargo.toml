@@ -1,36 +1,36 @@
 [package]
 description = "Platz.io SDK"
-edition = "2021"
+edition = "2024"
 license = "Apache-2.0"
 name = "platz-sdk"
 repository = "https://github.com/platzio/sdk-rs"
 version = "0.6.2"
 
 [dependencies]
-anyhow = "1.0.89"
-async-std = "1.13.0"
-async-trait = "0.1.83"
+anyhow = "1.0.100"
+async-std = "1.13.2"
+async-trait = "0.1.89"
 base64 = "0.22.1"
-chrono = { version = "0.4.38", features = ["serde"] }
-dirs = "5.0.1"
+chrono = { version = "0.4.42", features = ["serde"] }
+dirs = "6.0.0"
 futures = "0.3.31"
 kv-derive = "1.0.1"
 lazy_static = "1.5.0"
-platz-chart-ext = "0.5.14"
-reqwest = { version = "0.12.8", default-features = false, features = [
-    "rustls-tls",
+platz-chart-ext = "0.6.2"
+reqwest = { version = "0.13.1", default-features = false, features = [
     "json",
     "gzip",
     "brotli",
     "deflate",
+    "query",
 ] }
-rust_decimal = "1.36.0"
+rust_decimal = "1.39.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-serde_with = "3.11.0"
-strum = { version = "0.26", features = ["derive"] }
-thiserror = "1.0.64"
-toml = "0.8.19"
-tracing = "0.1.40"
-url = { version = "2.5.2", features = ["serde"] }
+serde_with = "3.16.1"
+strum = { version = "0.27", features = ["derive"] }
+thiserror = "2.0.17"
+toml = "0.9.10"
+tracing = "0.1.44"
+url = { version = "2.5.7", features = ["serde"] }
 uuid = { version = "1", features = ["serde"] }
