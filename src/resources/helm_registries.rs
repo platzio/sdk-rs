@@ -3,7 +3,17 @@ use anyhow::Result;
 use chrono::prelude::*;
 use kv_derive::{prelude::*, IntoVec};
 use serde::{Deserialize, Serialize};
+use strum::{Display, EnumString};
 use uuid::Uuid;
+
+#[derive(
+    Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize, EnumString, Display,
+)]
+pub enum HelmRegistryProvider {
+    #[default]
+    Ecr,
+    Oci,
+}
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct HelmRegistry {
@@ -14,6 +24,8 @@ pub struct HelmRegistry {
     pub kind_id: Uuid,
     pub available: bool,
     pub fa_icon: String,
+    #[serde(default)]
+    pub provider: HelmRegistryProvider,
 }
 
 #[derive(Default, IntoVec)]
