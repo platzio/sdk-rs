@@ -2,8 +2,8 @@
 
 ## Versioning
 
-The `version` in `Cargo.toml` tracks the current Platzio release minor (see
-`platzio/dev` AGENTS.md, "Versioning across repos"). Keep it matching the
-release line — e.g. `0.7.0` while Platzio releases `0.7.0-beta.1`. The
-`-beta.N` marker is not significant for this crate; prefer the plain
-version, and don't let it drift behind the release.
+This SDK is released in lockstep with the Platzio backend and carries the
+**exact same version as the backend release**, pre-release marker included
+(see `platzio/dev` AGENTS.md, "Versioning across repos"). So when the
+backend releases `0.7.0-beta.1`, this crate is `0.7.0-beta.1` too — they
+are always cut together. Update both `Cargo.toml` and the lockfile entry.
