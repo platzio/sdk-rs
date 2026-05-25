@@ -1549,7 +1549,7 @@ dependencies = [
 
 [[package]]
 name = "platz-sdk"
-version = "0.7.0-beta.1"
+version = "0.7.0"
 dependencies = [
  "anyhow",
  "async-std",
